@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+
 public interface EstudianteService {
-    public List<Estudiante> findAllEstudiantes() throws IOException, SQLException;
-    public Optional<Estudiante> findByIdEstudiante(int id) throws IOException, SQLException;
-    public Estudiante createEstudiante(Estudiante estudiante) throws IOException;
-    public Estudiante updateEstudiante(int id, Estudiante estudiante) throws IOException;
-    public void deleteEstudiante(int id) throws IOException;
+    List<Estudiante> findAllEstudiantes() throws IOException, SQLException;
+    Optional<Estudiante> findByIdEstudiante(int id) throws IOException, SQLException;
+    Estudiante createEstudiante(Estudiante estudiante) throws IOException;
+    Estudiante updateEstudiante(int id, Estudiante estudiante) throws IOException;
+    void deleteEstudiante(int id) throws IOException;
 }
 

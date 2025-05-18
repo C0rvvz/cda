@@ -1,6 +1,49 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.2.9-slim
-WORKDIR /opt
-ENV PORT=8080
-EXPOSE 8080
-COPY target/*.jar /opt/app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+services:
+  api_service:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - springapimysql-net
+    environment:
+      - spring.profiles.active=mysql
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/cda-bdd?allowPublicKeyRetrieval=true&useSSL=false
+      - spring.datasource.username=root
+      - spring.datasource.password=admin
+      - spring.jpa.hibernate.ddl-auto=update
+      - server.port=8080
+      - spring.datasource.hikari.initialization-fail-timeout=60000
+      - spring.datasource.hikari.connection-timeout=60000
+    depends_on:
+      - mysqldb
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  mysqldb:
+    image: "mysql:8.0"
+    restart: always
+    ports:
+      - 3307:3306
+    networks:
+      - springapimysql-net
+    environment:
+      MYSQL_DATABASE: cda-bdd
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  mysql_data:
+
+networks:
+  springapimysql-net:

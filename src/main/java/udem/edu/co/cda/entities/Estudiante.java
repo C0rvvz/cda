@@ -1,6 +1,7 @@
 package udem.edu.co.cda.entities;
 
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
@@ -23,8 +24,6 @@ public class Estudiante {
         joinColumns = @JoinColumn(name = "estudiante_id"),
         inverseJoinColumns = @JoinColumn(name = "materia_id")
     )
-
-    
     private List<Materia> materias;
 
     public Estudiante() {

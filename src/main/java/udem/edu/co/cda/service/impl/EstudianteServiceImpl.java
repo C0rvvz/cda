@@ -8,6 +8,7 @@ import udem.edu.co.cda.service.EstudianteService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,26 +16,29 @@ import java.util.Optional;
 public class EstudianteServiceImpl implements EstudianteService {
 
     @Autowired
-    EstudianteRepository estudianteRepository;
+    private EstudianteRepository estudianteRepository;
 
     @Override
     public List<Estudiante> findAllEstudiantes() throws IOException, SQLException {
-        return (List<Estudiante>) estudianteRepository.findAll();
+        List<Estudiante> estudiantes = new ArrayList<>();
+        estudianteRepository.findAll().forEach(estudiantes::add);
+        return estudiantes;
     }
 
     @Override
     public Optional<Estudiante> findByIdEstudiante(int id) throws IOException, SQLException {
-        return (Optional<Estudiante>) estudianteRepository.findById(id);
+        return estudianteRepository.findById(id);
     }
 
     @Override
     public Estudiante createEstudiante(Estudiante estudiante) throws IOException {
-        return (Estudiante) estudianteRepository.save(estudiante);
+        return estudianteRepository.save(estudiante);
     }
 
     @Override
     public Estudiante updateEstudiante(int id, Estudiante estudiante) throws IOException {
-        return (Estudiante) estudianteRepository.save(estudiante);
+        estudiante.setId(id);
+        return estudianteRepository.save(estudiante);
     }
 
     @Override

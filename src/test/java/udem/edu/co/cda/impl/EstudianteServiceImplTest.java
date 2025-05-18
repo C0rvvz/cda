@@ -23,6 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class EstudianteServiceImplTest {
 
+    static {
+        // Configuración para usar el modo inline de Mockito
+        System.setProperty("mockito.mock-maker-inline", "true");
+    }
+
     @Mock
     private EstudianteRepository estudianteRepository;
 
