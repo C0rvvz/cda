@@ -1,6 +1,6 @@
 services:
   api_service:
-    image: c0rvvz/cda-api:latest  
+    image: cr0vvz/cda-api:latest 
     restart: always
     ports:
       - 8080:8080
@@ -16,16 +16,17 @@ services:
       - spring.datasource.hikari.initialization-fail-timeout=60000
       - spring.datasource.hikari.connection-timeout=60000
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
-      interval: 10s
-      timeout: 5s
+      test: curl -f http://localhost:8080/actuator/health || exit 1
+      interval: 30s
+      timeout: 10s
       retries: 5
       start_period: 40s
 
   mysqldb:
-    image: "tuusuario/cda-mysql:latest"  # Opcional: solo si quieres usar una imagen personalizada
+    image: "mysql:8.0"
     restart: always
     ports:
       - 3307:3306
