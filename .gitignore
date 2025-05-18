@@ -1,8 +1,8 @@
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!templates/cda-template.json/main/**/target/
+!templates/cda-template.json/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -26,8 +26,8 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!templates/cda-template.json/main/**/build/
+!templates/cda-template.json/test/**/build/
 
 ### VS Code ###
 .vscode/

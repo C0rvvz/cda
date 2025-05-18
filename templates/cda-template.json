@@ -1,0 +1,36 @@
+{
+  "index_patterns": [
+    "cda-logs-*"
+  ],
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "index.lifecycle.name": "cda-logs-policy",
+    "index.lifecycle.rollover_alias": "cda-logs"
+  },
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "log_level": {
+        "type": "keyword"
+      },
+      "logger_name": {
+        "type": "text"
+      },
+      "message": {
+        "type": "text"
+      },
+      "thread_name": {
+        "type": "keyword"
+      },
+      "class": {
+        "type": "keyword"
+      },
+      "stack_trace": {
+        "type": "text"
+      }
+    }
+  }
+}

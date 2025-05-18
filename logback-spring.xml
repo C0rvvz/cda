@@ -1,0 +1,12 @@
+<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+    <providers>
+        <timestamp>
+            <fieldName>timestamp</fieldName>
+            <pattern>ISO8601</pattern>
+        </timestamp>
+        <message/>
+        <logLevel>
+            <fieldName>level</fieldName>
+        </logLevel>
+    </providers>
+</encoder>

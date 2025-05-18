@@ -1,6 +1,7 @@
 package udem.edu.co.cda.entities;
 
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
@@ -8,7 +9,7 @@ import java.util.List;
 public class Profesor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Cambiar a una estrategia compatible con MySQL
     private int id;
     private String name;
 
@@ -51,3 +52,4 @@ public class Profesor {
         this.materias = materias;
     }
 }
+

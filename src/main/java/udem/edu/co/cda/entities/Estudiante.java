@@ -9,7 +9,7 @@ import java.util.List;
 public class Estudiante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Cambiar a una estrategia compatible con MySQL
     private int id;
     private String name;
 
@@ -57,3 +57,4 @@ public class Estudiante {
         this.materias = materias;
     }
 }
+

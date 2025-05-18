@@ -1,31 +1,29 @@
 services:
   api_service:
-    image: c0rvvz/cda-api:latest  
-    restart: always
+    build: .
+    restart: on-failure
     ports:
-      - 8080:8080
+      - 8081:8080
     networks:
       - springapimysql-net
     environment:
       - spring.profiles.active=mysql
-      - spring.datasource.url=jdbc:mysql://mysqldb:3306/cda-bdd?allowPublicKeyRetrieval=true&useSSL=false
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/cda-bdd?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
       - spring.datasource.username=root
       - spring.datasource.password=admin
-      - spring.jpa.hibernate.ddl-auto=update
+      - spring.jpa.hibernate.ddl-auto=create
+      - spring.jpa.generate-ddl=true
+      - spring.jpa.show-sql=true
+      - spring.jpa.properties.hibernate.format_sql=true
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
       - server.port=8080
       - spring.datasource.hikari.initialization-fail-timeout=60000
       - spring.datasource.hikari.connection-timeout=60000
     depends_on:
       - mysqldb
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 40s
 
   mysqldb:
-    image: "tuusuario/cda-mysql:latest"  # Opcional: solo si quieres usar una imagen personalizada
+    image: "mysql:8.0"
     restart: always
     ports:
       - 3307:3306
@@ -36,14 +34,56 @@ services:
       MYSQL_ROOT_PASSWORD: admin
     volumes:
       - mysql_data:/var/lib/mysql
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - network.bind_host=0.0.0.0
+      - http.host=0.0.0.0
+    ports:
+      - "9200:9200"
     healthcheck:
-      test: mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.0.0
+    ports:
+      - "5000:5000/tcp"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
+      - XPACK_MONITORING_ENABLED=false
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.0.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
 
 volumes:
   mysql_data:
-
+    driver: local
+  es_data:
+    driver: local
 networks:
   springapimysql-net:
+    driver: bridge
