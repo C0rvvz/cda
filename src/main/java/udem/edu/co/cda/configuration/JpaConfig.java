@@ -46,13 +46,21 @@ public class JpaConfig {
         em.setJpaVendorAdapter(vendorAdapter);
 
         Properties properties = new Properties();
-        properties.setProperty("hibernate.dialect", env.getProperty("spring.jpa.database-platform"));
-        properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
-        properties.setProperty("hibernate.show_sql", env.getProperty("spring.jpa.show-sql"));
-        properties.setProperty("hibernate.format_sql", env.getProperty("spring.jpa.properties.hibernate.format_sql"));
+        setPropertySafe(properties, "hibernate.dialect", env.getProperty("spring.jpa.database-platform"));
+        setPropertySafe(properties, "hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
+        setPropertySafe(properties, "hibernate.show_sql", env.getProperty("spring.jpa.show-sql"));
+        setPropertySafe(properties, "hibernate.format_sql", env.getProperty("spring.jpa.properties.hibernate.format_sql"));
         em.setJpaProperties(properties);
 
         return em;
+    }
+
+    private void setPropertySafe(Properties props, String key, String value) {
+        if (value != null) {
+            props.setProperty(key, value);
+        } else {
+            System.err.println("[JpaConfig] Propiedad no encontrada o null: " + key);
+        }
     }
 
     @Bean
