@@ -6,21 +6,52 @@
     "number_of_shards": 1,
     "number_of_replicas": 0,
     "index.lifecycle.name": "cda-logs-policy",
-    "index.lifecycle.rollover_alias": "cda-logs"
+    "index.lifecycle.rollover_alias": "cda-logs",
+    "index.codec": "best_compression",
+    "analysis": {
+      "analyzer": {
+        "cda_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
   },
   "mappings": {
+    "dynamic": "strict",
     "properties": {
       "@timestamp": {
-        "type": "date"
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "timestamp": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
       },
       "log_level": {
-        "type": "keyword"
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "text"
+          }
+        }
       },
       "logger_name": {
-        "type": "text"
+        "type": "text",
+        "analyzer": "cda_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
       },
       "message": {
-        "type": "text"
+        "type": "text",
+        "analyzer": "cda_analyzer"
       },
       "thread_name": {
         "type": "keyword"
@@ -29,7 +60,14 @@
         "type": "keyword"
       },
       "stack_trace": {
-        "type": "text"
+        "type": "text",
+        "index": false
+      },
+      "application": {
+        "type": "keyword"
+      },
+      "environment": {
+        "type": "keyword"
       }
     }
   }
