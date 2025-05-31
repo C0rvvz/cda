@@ -1,8 +1,0 @@
-version: '3'
-services:
-  logstash:
-    ports:
-      - "5000:5000/tcp"
-      - "9600:9600/tcp"
-    environment:
-      - LS_JAVA_OPTS=-Xms512m -Xmx512m

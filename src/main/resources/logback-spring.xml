@@ -1,9 +1,7 @@
 <configuration>
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>logstash:5000</destination>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"app":"cda-api","env":"dev"}</customFields>
-        </encoder>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
     <root level="INFO">

@@ -1,3 +1,4 @@
+# → Stack completo para desarrollo (API + MySQL + Elasticsearch + Logstash + Kibana)
 services:
   api_service:
     build: .
@@ -23,7 +24,7 @@ services:
     networks:
       - springapimysql-net
     environment:
-      MYSQL_DATABASE: cda-bdd
+      MYSQL_DATABASE: cda-bd
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_TCP_PORT: 3306
       TZ: America/Bogota
@@ -42,7 +43,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # Reducido para desarrollo
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - bootstrap.memory_lock=false
       - TZ=America/Bogota
     networks:
@@ -51,7 +52,7 @@ services:
       - "9200:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
-    healthcheck: # Añade este bloque
+    healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
       interval: 30s
       timeout: 10s
@@ -63,15 +64,13 @@ services:
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ./templates:/usr/share/logstash/templates
     networks:
       - elk-net
     ports:
       - "5000:5000"
-      - "5044:5044"
+      - "9600:9600"
     environment:
       - LS_JAVA_OPTS=-Xmx1g -Xms512m
-      - PIPELINE_WORKERS=2
       - TZ=America/Bogota
     depends_on:
       elasticsearch:

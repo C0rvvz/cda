@@ -1,15 +1,2 @@
-﻿  @"
-input {
-  http {
-    port => 5000
-    codec => "json"
-    }
-  }
-    
-    output {
-    elasticsearch {
-    hosts => ["http://elasticsearch:9200"]
-    index => "cda-logs-%{+YYYY.MM.dd}"
-    }
-  }
-    "@ | Out-File -FilePath logstash.conf -Encoding utf8
+﻿http.host: "0.0.0.0"
+xpack.monitoring.enabled: false
