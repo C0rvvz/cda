@@ -8,7 +8,7 @@ Sistema de gestión académica desarrollado con Spring Boot y JPA para administr
 
 - Java 21
 - Maven 3.6 o superior
-- Base de datos H2 (incluida para desarrollo)
+- Base de datos MySQL
 
 ## Ejecución
 
