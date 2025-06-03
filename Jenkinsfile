@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-creds') // definidas en Jenkins
+        DOCKERHUB_USER = 'tudockerhubuser'
+    }
+
+    stages {
+        stage('Build Spring Boot') {
+            steps {
+                dir('backend') {
+                    sh './mvnw clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Node.js') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh 'docker build -t $DOCKERHUB_USER/spring-app ./backend'
+                sh 'docker build -t $DOCKERHUB_USER/node-app ./frontend'
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USER --password-stdin"
+                sh 'docker push $DOCKERHUB_USER/spring-app'
+                sh 'docker push $DOCKERHUB_USER/node-app'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker-compose down'
+                sh 'docker-compose up -d'
+            }
+        }
+    }
+}
