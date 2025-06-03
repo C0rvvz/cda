@@ -1,0 +1,10 @@
+udem\edu\co\cda\TestCdaApplication.class
+udem\edu\co\cda\CdaApplicationTests.class
+udem\edu\co\cda\controller\EstudianteControllerTest.class
+udem\edu\co\cda\TestcontainersConfiguration.class
+udem\edu\co\cda\impl\MateriaServiceImplTest.class
+udem\edu\co\cda\impl\ProfesorServiceImplTest.class
+udem\edu\co\cda\MockitoConfig.class
+udem\edu\co\cda\impl\EstudianteServiceImplTest.class
+udem\edu\co\cda\NoAgentTestConfig.class
+udem\edu\co\cda\TestConfig.class
