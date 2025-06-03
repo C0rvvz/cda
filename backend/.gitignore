@@ -1,5 +1,5 @@
 HELP.md
-target/
+../target/
 !.mvn/wrapper/maven-wrapper.jar
 !templates/cda-template.json/main/**/target/
 !templates/cda-template.json/test/**/target/

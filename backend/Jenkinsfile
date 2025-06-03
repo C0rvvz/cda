@@ -1,6 +1,7 @@
 pipeline {
     agent any
 
+
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-creds') // definidas en Jenkins
         DOCKERHUB_USER = 'tudockerhubuser'
@@ -46,4 +47,7 @@ pipeline {
             }
         }
     }
+    dir('backend') {
+    sh 'mvn clean package'
 }
+
