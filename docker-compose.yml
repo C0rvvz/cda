@@ -1,19 +1,24 @@
-# → Stack completo para desarrollo (API + MySQL + Elasticsearch + Logstash + Kibana)
 services:
   api_service:
     build: .
     restart: unless-stopped
-    ports: [ "8080:8080" ]
-    networks: [ springapimysql-net, elk-net ]
+    ports:
+      - "8080:8080"
+    networks:
+      - springapimysql-net
+      - elk-net
     environment:
       SPRING_PROFILES_ACTIVE: mysql,logstash
       SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/cda-bdd?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: admin
       JAVA_OPTS: -Xmx512m -Xms256m
-    volumes: [ "./logs:/app/logs" ]
+    volumes:
+      - ./logs:/app/logs
     depends_on:
       mysqldb:
+        condition: service_healthy
+      logstash:
         condition: service_healthy
 
   mysqldb:
@@ -24,13 +29,12 @@ services:
     networks:
       - springapimysql-net
     environment:
-      MYSQL_DATABASE: cda-bd
+      MYSQL_DATABASE: cda-bdd
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_TCP_PORT: 3306
       TZ: America/Bogota
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -uroot -p$$MYSQL_ROOT_PASSWORD" ]
       interval: 5s
@@ -40,6 +44,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    restart: unless-stopped
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -61,6 +66,7 @@ services:
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.12.0
+    restart: unless-stopped
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash.yml:/usr/share/logstash/config/logstash.yml
@@ -83,6 +89,7 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
+    restart: unless-stopped
     networks:
       - elk-net
     ports:
@@ -107,6 +114,3 @@ networks:
   springapimysql-net:
   elk-net:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.21.0.0/24

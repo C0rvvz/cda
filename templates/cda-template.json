@@ -28,46 +28,50 @@
         "type": "date",
         "format": "strict_date_optional_time||epoch_millis"
       },
-      "timestamp": {
-        "type": "date",
-        "format": "strict_date_optional_time||epoch_millis"
-      },
-      "log_level": {
-        "type": "keyword",
-        "fields": {
-          "text": {
-            "type": "text"
-          }
-        }
-      },
-      "logger_name": {
-        "type": "text",
-        "analyzer": "cda_analyzer",
-        "fields": {
-          "keyword": {
+      "log": {
+        "properties": {
+          "timestamp": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          },
+          "log_level": {
+            "type": "keyword",
+            "fields": {
+              "text": {
+                "type": "text"
+              }
+            }
+          },
+          "logger_name": {
+            "type": "text",
+            "analyzer": "cda_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "message": {
+            "type": "text",
+            "analyzer": "cda_analyzer"
+          },
+          "thread_name": {
+            "type": "keyword"
+          },
+          "class": {
+            "type": "keyword"
+          },
+          "stack_trace": {
+            "type": "text",
+            "index": false
+          },
+          "application": {
+            "type": "keyword"
+          },
+          "environment": {
             "type": "keyword"
           }
         }
-      },
-      "message": {
-        "type": "text",
-        "analyzer": "cda_analyzer"
-      },
-      "thread_name": {
-        "type": "keyword"
-      },
-      "class": {
-        "type": "keyword"
-      },
-      "stack_trace": {
-        "type": "text",
-        "index": false
-      },
-      "application": {
-        "type": "keyword"
-      },
-      "environment": {
-        "type": "keyword"
       }
     }
   }
