@@ -24,17 +24,17 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Optional<Materia> findByIdMateria(int id) throws IOException, SQLException {
-        return (Optional<Materia>) materiaRepository.findById(id);
+        return materiaRepository.findById(id);
     }
 
     @Override
     public Materia createMateria(Materia materia) throws IOException {
-        return (Materia) materiaRepository.save(materia);
+        return materiaRepository.save(materia);
     }
 
     @Override
     public Materia updateMateria(int id, Materia materia) throws IOException {
-        return (Materia) materiaRepository.save(materia);
+        return materiaRepository.save(materia);
     }
 
     @Override

@@ -6,7 +6,6 @@ import udem.edu.co.cda.entities.Profesor;
 import udem.edu.co.cda.repository.ProfesorRepository;
 import udem.edu.co.cda.service.ProfesorService;
 
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,17 +23,17 @@ public class ProfesorServiceImpl implements ProfesorService {
 
     @Override
     public Optional<Profesor> findByIdProfesor(int id) throws IOException, SQLException {
-        return (Optional<Profesor>) profesorRepository.findById(id);
+        return profesorRepository.findById(id);
     }
 
     @Override
     public Profesor createProfesor(Profesor profesor) throws IOException{
-        return (Profesor) profesorRepository.save(profesor);
+        return profesorRepository.save(profesor);
     }
 
     @Override
     public Profesor updateProfesor(int id, Profesor profesor) throws IOException{
-        return (Profesor) profesorRepository.save(profesor);
+        return profesorRepository.save(profesor);
     }
 
     @Override
