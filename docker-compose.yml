@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8081:8080"   # Host 8081 -> Contenedor 8080
     networks:
       - springapimysql-net
       - elk-net
@@ -33,12 +33,11 @@ services:
     environment:
       MYSQL_DATABASE: cda-bdd
       MYSQL_ROOT_PASSWORD: admin
-      MYSQL_TCP_PORT: 3306
       TZ: America/Bogota
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -uroot -p$$MYSQL_ROOT_PASSWORD" ]
+      test: [ "CMD-SHELL", "mysqladmin ping -uroot -p$${MYSQL_ROOT_PASSWORD}" ]
       interval: 5s
       timeout: 20s
       retries: 10
@@ -48,11 +47,11 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     restart: unless-stopped
     environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - bootstrap.memory_lock=false
-      - TZ=America/Bogota
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      bootstrap.memory_lock: "false"
+      TZ: America/Bogota
     networks:
       - elk-net
     ports:
@@ -78,8 +77,8 @@ services:
       - "5000:5000"
       - "9600:9600"
     environment:
-      - LS_JAVA_OPTS=-Xmx1g -Xms512m
-      - TZ=America/Bogota
+      LS_JAVA_OPTS: "-Xmx1g -Xms512m"
+      TZ: America/Bogota
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -97,8 +96,8 @@ services:
     ports:
       - "5601:5601"
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - TZ=America/Bogota
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      TZ: America/Bogota
     depends_on:
       elasticsearch:
         condition: service_healthy
