@@ -1,8 +1,8 @@
 services:
   api_service:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -70,8 +70,8 @@ services:
     image: docker.elastic.co/logstash/logstash:8.12.0
     restart: unless-stopped
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./backend/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./backend/logstash.yml:/usr/share/logstash/config/logstash.yml
     networks:
       - elk-net
     ports:
@@ -107,6 +107,19 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - springapimysql-net
+      - elk-net
+    depends_on:
+      - api_service
 
 volumes:
   mysql_data:

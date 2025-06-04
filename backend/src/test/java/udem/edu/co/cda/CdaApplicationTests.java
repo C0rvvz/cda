@@ -2,23 +2,17 @@ package udem.edu.co.cda;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ContextConfiguration;
+import udem.edu.co.cda.config.TestContainerConfig;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import({TestConfig.class, MockitoConfig.class})
-@TestPropertySource("classpath:application-test.properties")
+@ContextConfiguration(initializers = TestContainerConfig.class)
 class CdaApplicationTests {
-
-    static {
-        // Configuración para usar el mock-maker-inline de Mockito
-        System.setProperty("mockito.mock-maker-inline", "true");
-    }
 
     @Test
     void contextLoads() {
-        // Esta prueba verifica que el contexto de Spring se carga correctamente
+        // Verifica que el contexto de Spring se cargue correctamente con Testcontainers
     }
 }

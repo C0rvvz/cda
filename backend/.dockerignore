@@ -1,0 +1,28 @@
+# Ignorar carpetas y archivos de compilación y configuración local
+target/
+bin/
+build/
+
+# Ignorar archivos de configuración del IDE
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# Ignorar logs y archivos temporales
+*.log
+*.tmp
+*.swp
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar carpetas de dependencias (maven, gradle)
+.mvn/
+.gradle/
+
+# Ignorar directorios de control de versiones
+.git/
+.gitignore

@@ -9,8 +9,6 @@ import udem.edu.co.cda.entities.Materia;
 import udem.edu.co.cda.repository.MateriaRepository;
 import udem.edu.co.cda.service.impl.MateriaServiceImpl;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +28,10 @@ public class MateriaServiceImplTest {
     private MateriaServiceImpl materiaService;
 
     @Test
-    void testFindAllMaterias() throws IOException, SQLException {
+    void testFindAllMaterias() {
         List<Materia> materias = new ArrayList<>();
-        Materia materia1 = new Materia(1L, "Matemáticas");
-        Materia materia2 = new Materia(2L, "Física");
-        materias.add(materia1);
-        materias.add(materia2);
+        materias.add(new Materia(1L, "Matemáticas"));
+        materias.add(new Materia(2L, "Física"));
 
         when(materiaRepository.findAll()).thenReturn(materias);
 
@@ -43,104 +39,109 @@ public class MateriaServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
-        assertEquals("Matemáticas", resultado.get(0).getNombre()); // corregido getNombre()
+        assertEquals("Matemáticas", resultado.get(0).getNombre());
         assertEquals("Física", resultado.get(1).getNombre());
+
         verify(materiaRepository, times(1)).findAll();
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testFindByIdMateria() throws IOException, SQLException {
+    void testFindByIdMateria() {
         Materia materia = new Materia(1L, "Matemáticas");
-        when(materiaRepository.findById(1)).thenReturn(Optional.of(materia));
+        when(materiaRepository.findById(1L)).thenReturn(Optional.of(materia));
 
-        Optional<Materia> resultado = materiaService.findByIdMateria(1);
+        Optional<Materia> resultado = materiaService.findByIdMateria(1L);
 
         assertTrue(resultado.isPresent());
         assertEquals("Matemáticas", resultado.get().getNombre());
-        verify(materiaRepository, times(1)).findById(1);
+
+        verify(materiaRepository, times(1)).findById(1L);
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testFindByIdMateriaNotFound() throws IOException, SQLException {
+    void testFindByIdMateriaNotFound() {
         when(materiaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<Materia> resultado = materiaService.findByIdMateria(99);
+        Optional<Materia> resultado = materiaService.findByIdMateria(99L);
 
         assertFalse(resultado.isPresent());
-        verify(materiaRepository, times(1)).findById(99);
+
+        verify(materiaRepository, times(1)).findById(99L);
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testCreateMateria() throws IOException {
+    void testCreateMateria() {
         Materia materia = new Materia();
         materia.setNombre("Matemáticas");
 
-        Materia materiaGuardada = new Materia(1, "Matemáticas");
+        Materia materiaGuardada = new Materia(1L, "Matemáticas");
 
         when(materiaRepository.save(any(Materia.class))).thenReturn(materiaGuardada);
 
         Materia resultado = materiaService.createMateria(materia);
 
         assertNotNull(resultado);
-        assertEquals(1, resultado.getId());
+        assertEquals(1L, resultado.getId());
         assertEquals("Matemáticas", resultado.getNombre());
-        verify(materiaRepository, times(1)).save(materia);
+
+        verify(materiaRepository, times(1)).save(any(Materia.class));
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testUpdateMateria() throws IOException {
-        Materia materia = new Materia(1, "Matemáticas Avanzadas");
+    void testUpdateMateria() {
+        Materia materiaExistente = new Materia(1L, "Matemáticas");
+        Materia materiaActualizada = new Materia(1L, "Matemáticas Avanzadas");
 
-        when(materiaRepository.save(any(Materia.class))).thenReturn(materia);
+        when(materiaRepository.findById(1L)).thenReturn(Optional.of(materiaExistente));
+        when(materiaRepository.save(any(Materia.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Materia resultado = materiaService.updateMateria(1L, materia);
+        Materia resultado = materiaService.updateMateria(1L, materiaActualizada);
 
         assertNotNull(resultado);
-        assertEquals(1, resultado.getId());
+        assertEquals(1L, resultado.getId());
         assertEquals("Matemáticas Avanzadas", resultado.getNombre());
-        verify(materiaRepository, times(1)).save(materia);
+
+        verify(materiaRepository, times(1)).findById(1L);
+        verify(materiaRepository, times(1)).save(any(Materia.class));
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testDeleteMateria() throws IOException {
-        Materia materia = new Materia(1L, "Matemáticas");
-
-        // Supongo que el servicio busca la materia y luego la elimina, por eso mockeamos findById y delete
-        when(materiaRepository.findById(1)).thenReturn(Optional.of(materia));
-        doNothing().when(materiaRepository).delete(materia);
+    void testDeleteMateria() {
+        when(materiaRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(materiaRepository).deleteById(1L);
 
         materiaService.deleteMateria(1L);
 
-        verify(materiaRepository, times(1)).findById(1);
-        verify(materiaRepository, times(1)).delete(materia);
+        verify(materiaRepository, times(1)).existsById(1L);
+        verify(materiaRepository, times(1)).deleteById(1L);
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testDeleteMateriaNotFound() throws IOException {
-        when(materiaRepository.findById(anyLong())).thenReturn(Optional.empty());
+    void testDeleteMateriaNotFound() {
+        when(materiaRepository.existsById(anyLong())).thenReturn(false);
 
-        // Aquí podrías lanzar excepción o manejarlo, depende del servicio
-        assertThrows(RuntimeException.class, () -> {
-            materiaService.deleteMateria(99);
-        });
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> materiaService.deleteMateria(99L));
 
-        verify(materiaRepository, times(1)).findById(99);
+        assertEquals("Materia no encontrada con id: 99", thrown.getMessage());
+
+        verify(materiaRepository, times(1)).existsById(99L);
         verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
-    void testHandleRepositoryException() {
+    void testFindAllMateriasException() {
         when(materiaRepository.findAll()).thenThrow(new RuntimeException("Error de base de datos"));
 
-        assertThrows(RuntimeException.class, () -> {
-            materiaService.findAllMaterias();
-        });
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> materiaService.findAllMaterias());
+
+        assertEquals("Error de base de datos", thrown.getMessage());
+
         verify(materiaRepository, times(1)).findAll();
         verifyNoMoreInteractions(materiaRepository);
     }

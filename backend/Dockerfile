@@ -1,10 +1,10 @@
 # Etapa de construcción
 FROM maven:3.9.5-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY backend/pom.xml .
+COPY pom.xml .
 RUN mvn dependency:go-offline
 
-COPY backend/src ./src
+COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Etapa final

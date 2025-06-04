@@ -36,16 +36,20 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia updateMateria(Long id, Materia materia) {
-        return materiaRepository.findById(id)
-                .map(existing -> {
-                    materia.setId(id);
-                    return materiaRepository.save(materia);
-                })
+        Materia existingMateria = materiaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Materia no encontrada con id: " + id));
+
+        existingMateria.setNombre(materia.getNombre());
+
+        return materiaRepository.save(existingMateria);
     }
 
     @Override
     public void deleteMateria(Long id) {
-        materiaRepository.deleteById(id);
+        if (materiaRepository.existsById(id)) {
+            materiaRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Materia no encontrada con id: " + id);
+        }
     }
 }
