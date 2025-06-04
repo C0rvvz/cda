@@ -13,12 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = "udem.edu.co.cda.repository")
 @EnableTransactionManagement
 public class TestConfig {
-    // Esta clase proporciona configuración específica para pruebas
 
-    /**
-     * Este método proporciona un bean de ejemplo para pruebas
-     * Se puede utilizar para configurar mocks o beans específicos para las pruebas
-     */
     @Bean
     public String testBean() {
         return "testValue";

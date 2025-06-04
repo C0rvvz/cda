@@ -5,6 +5,10 @@
     <file url="file://$PROJECT_DIR$/backend/src/main/java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/backend/src/main/java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/backend/src/main/resources" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/backend/src/test/java/udem/edu/co/cda/controller/AsistenciaControllerTest.java" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/backend/src/test/java/udem/edu/co/cda/controller/ClaseControllerTest.java" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/backend/src/test/java/udem/edu/co/cda/controller/GlobalExceptionHandlerTest.java" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/backend/src/test/java/udem/edu/co/cda/controller/MateriaControllerTest.java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/backend/src/test/resources/application-mysql.properties" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/backend/src/test/resources/application.properties" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/backend/src/test/resources/logback-spring.xml" charset="ISO-8859-1" />

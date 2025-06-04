@@ -17,7 +17,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,116 +29,119 @@ public class MateriaServiceImplTest {
     @InjectMocks
     private MateriaServiceImpl materiaService;
 
-    // Ya no necesitamos el método setUp() con @BeforeEach porque
-    // la extensión @ExtendWith(MockitoExtension.class) inicializa los mocks automáticamente
-
     @Test
     void testFindAllMaterias() throws IOException, SQLException {
-        // Arrange
         List<Materia> materias = new ArrayList<>();
-        Materia materia1 = new Materia(1, "Matemáticas");
-        Materia materia2 = new Materia(2, "Física");
+        Materia materia1 = new Materia(1L, "Matemáticas");
+        Materia materia2 = new Materia(2L, "Física");
         materias.add(materia1);
         materias.add(materia2);
 
         when(materiaRepository.findAll()).thenReturn(materias);
 
-        // Act
         List<Materia> resultado = materiaService.findAllMaterias();
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
-        assertEquals("Matemáticas", resultado.get(0).getName());
-        assertEquals("Física", resultado.get(1).getName());
+        assertEquals("Matemáticas", resultado.get(0).getNombre()); // corregido getNombre()
+        assertEquals("Física", resultado.get(1).getNombre());
         verify(materiaRepository, times(1)).findAll();
+        verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
     void testFindByIdMateria() throws IOException, SQLException {
-        // Arrange
-        Materia materia = new Materia(1, "Matemáticas");
+        Materia materia = new Materia(1L, "Matemáticas");
         when(materiaRepository.findById(1)).thenReturn(Optional.of(materia));
 
-        // Act
         Optional<Materia> resultado = materiaService.findByIdMateria(1);
 
-        // Assert
         assertTrue(resultado.isPresent());
-        assertEquals("Matemáticas", resultado.get().getName());
+        assertEquals("Matemáticas", resultado.get().getNombre());
         verify(materiaRepository, times(1)).findById(1);
+        verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
     void testFindByIdMateriaNotFound() throws IOException, SQLException {
-        // Arrange
-        when(materiaRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(materiaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act
         Optional<Materia> resultado = materiaService.findByIdMateria(99);
 
-        // Assert
         assertFalse(resultado.isPresent());
         verify(materiaRepository, times(1)).findById(99);
+        verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
     void testCreateMateria() throws IOException {
-        // Arrange
         Materia materia = new Materia();
-        materia.setName("Matemáticas");
+        materia.setNombre("Matemáticas");
 
         Materia materiaGuardada = new Materia(1, "Matemáticas");
 
         when(materiaRepository.save(any(Materia.class))).thenReturn(materiaGuardada);
 
-        // Act
         Materia resultado = materiaService.createMateria(materia);
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(1, resultado.getId());
-        assertEquals("Matemáticas", resultado.getName());
+        assertEquals("Matemáticas", resultado.getNombre());
         verify(materiaRepository, times(1)).save(materia);
+        verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
     void testUpdateMateria() throws IOException {
-        // Arrange
         Materia materia = new Materia(1, "Matemáticas Avanzadas");
 
         when(materiaRepository.save(any(Materia.class))).thenReturn(materia);
 
-        // Act
-        Materia resultado = materiaService.updateMateria(1, materia);
+        Materia resultado = materiaService.updateMateria(1L, materia);
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(1, resultado.getId());
-        assertEquals("Matemáticas Avanzadas", resultado.getName());
+        assertEquals("Matemáticas Avanzadas", resultado.getNombre());
         verify(materiaRepository, times(1)).save(materia);
+        verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
     void testDeleteMateria() throws IOException {
-        // Arrange
-        doNothing().when(materiaRepository).delete(any(Materia.class));
+        Materia materia = new Materia(1L, "Matemáticas");
 
-        // Act
-        materiaService.deleteMateria(1);
+        // Supongo que el servicio busca la materia y luego la elimina, por eso mockeamos findById y delete
+        when(materiaRepository.findById(1)).thenReturn(Optional.of(materia));
+        doNothing().when(materiaRepository).delete(materia);
 
-        // Assert
-        verify(materiaRepository, times(1)).delete(any(Materia.class));
+        materiaService.deleteMateria(1L);
+
+        verify(materiaRepository, times(1)).findById(1);
+        verify(materiaRepository, times(1)).delete(materia);
+        verifyNoMoreInteractions(materiaRepository);
+    }
+
+    @Test
+    void testDeleteMateriaNotFound() throws IOException {
+        when(materiaRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // Aquí podrías lanzar excepción o manejarlo, depende del servicio
+        assertThrows(RuntimeException.class, () -> {
+            materiaService.deleteMateria(99);
+        });
+
+        verify(materiaRepository, times(1)).findById(99);
+        verifyNoMoreInteractions(materiaRepository);
     }
 
     @Test
     void testHandleRepositoryException() {
-        // Arrange
         when(materiaRepository.findAll()).thenThrow(new RuntimeException("Error de base de datos"));
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> {
             materiaService.findAllMaterias();
         });
+        verify(materiaRepository, times(1)).findAll();
+        verifyNoMoreInteractions(materiaRepository);
     }
 }

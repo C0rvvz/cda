@@ -7,57 +7,46 @@ import java.util.List;
 @Entity
 @Table(name="materia")
 public class Materia {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Cambiar a una estrategia compatible con MySQL
-    private Integer id;
-    private String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nombre;
+    @OneToMany(mappedBy = "materia")
+    private List<Clase> clases;
 
-    public Materia(Integer id, String name) {
+    public Materia(Long id, String nombre) {
         this.id = id;
-        this.name = name;
+        this.nombre = nombre;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "profesor_id")
-    private Profesor profesor;
-
-    @ManyToMany(mappedBy = "materias")
-    private List<Estudiante> estudiantes;
 
     public Materia() {
+
     }
 
-    public int getId() {
+    // getters/setters
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public Profesor getProfesor() {
-        return profesor;
+    public List<Clase> getClases() {
+        return clases;
     }
 
-    public void setProfesor(Profesor profesor) {
-        this.profesor = profesor;
-    }
-
-    public List<Estudiante> getEstudiantes() {
-        return estudiantes;
-    }
-
-    public void setEstudiantes(List<Estudiante> estudiantes) {
-        this.estudiantes = estudiantes;
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
     }
 }
 

@@ -6,8 +6,7 @@ import udem.edu.co.cda.entities.Materia;
 import udem.edu.co.cda.repository.MateriaRepository;
 import udem.edu.co.cda.service.MateriaService;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,32 +14,38 @@ import java.util.Optional;
 public class MateriaServiceImpl implements MateriaService {
 
     @Autowired
-    MateriaRepository materiaRepository;
+    private MateriaRepository materiaRepository;
 
     @Override
-    public List<Materia> findAllMaterias() throws IOException, SQLException {
-        return (List<Materia>) materiaRepository.findAll();
+    public List<Materia> findAllMaterias() {
+        Iterable<Materia> iterable = materiaRepository.findAll();
+        List<Materia> list = new ArrayList<>();
+        iterable.forEach(list::add);
+        return list;
     }
 
     @Override
-    public Optional<Materia> findByIdMateria(int id) throws IOException, SQLException {
+    public Optional<Materia> findByIdMateria(Long id) {
         return materiaRepository.findById(id);
     }
 
     @Override
-    public Materia createMateria(Materia materia) throws IOException {
+    public Materia createMateria(Materia materia) {
         return materiaRepository.save(materia);
     }
 
     @Override
-    public Materia updateMateria(int id, Materia materia) throws IOException {
-        return materiaRepository.save(materia);
+    public Materia updateMateria(Long id, Materia materia) {
+        return materiaRepository.findById(id)
+                .map(existing -> {
+                    materia.setId(id);
+                    return materiaRepository.save(materia);
+                })
+                .orElseThrow(() -> new RuntimeException("Materia no encontrada con id: " + id));
     }
 
     @Override
-    public void deleteMateria(int id) throws IOException {
-        Materia materiaEliminada = new Materia();
-        materiaEliminada.setId(id);
-        materiaRepository.delete(materiaEliminada);
+    public void deleteMateria(Long id) {
+        materiaRepository.deleteById(id);
     }
 }

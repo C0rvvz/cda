@@ -5,75 +5,39 @@ import org.springframework.web.bind.annotation.*;
 import udem.edu.co.cda.entities.Materia;
 import udem.edu.co.cda.service.MateriaService;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/cda")
+@RequestMapping("/cda/materias")
+@CrossOrigin(origins = "http://localhost:3000")
 public class MateriaController {
 
     @Autowired
-    MateriaService materiaService;
+    private MateriaService materiaService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/materia")
-    public List<Materia> findAllMaterias() {
-        try {
-            return this.materiaService.findAllMaterias();
-        } catch (IOException e) {
-            System.err.println("ERROR: informacion no valida:\n");
-            return null;
-        } catch (SQLException e) {
-            System.err.println("ERROR: No existen materias:\n");
-            return null;
-        }
+    @GetMapping
+    public List<Materia> getAllMaterias() {
+        return materiaService.findAllMaterias();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/materia/{id}")
-    public Optional<Materia> findMateriaById(@PathVariable("id") int id) {
-        try {
-            return this.materiaService.findByIdMateria(id);
-        } catch (IOException e) {
-            System.err.println("ERROR: informacion no valida:\n");
-            return null;
-        } catch (SQLException e) {
-            System.err.println("ERROR: El ID no existe:\n");
-            return null;
-        }
+    @GetMapping("/{id}")
+    public Optional<Materia> getMateriaById(@PathVariable Long id) {
+        return materiaService.findByIdMateria(id);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/materia")
+    @PostMapping
     public Materia createMateria(@RequestBody Materia materia) {
-        try {
-            return this.materiaService.createMateria(materia);
-        } catch (IOException e) {
-            System.err.println("ERROR: informacion no valida:\n");
-            return null;
-        }
+        return materiaService.createMateria(materia);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/materia/{id}")
-    public Materia updateMateria(@PathVariable("id") int id, @RequestBody Materia materia) {
-        try {
-            return this.materiaService.updateMateria(id, materia);
-        } catch (IOException e) {
-            System.err.println("ERROR: informacion no valida:\n");
-            return null;
-        }
+    @PutMapping("/{id}")
+    public Materia updateMateria(@PathVariable Long id, @RequestBody Materia materia) {
+        return materiaService.updateMateria(id, materia);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping("/materia/{id}")
-    public void deleteMateria(@PathVariable("id") int id) {
-        try {
-            this.materiaService.deleteMateria(id);
-        } catch (IOException e) {
-            System.err.println("ERROR: informacion no valida:\n");
-        }
+    @DeleteMapping("/{id}")
+    public void deleteMateria(@PathVariable Long id) {
+        materiaService.deleteMateria(id);
     }
 }
